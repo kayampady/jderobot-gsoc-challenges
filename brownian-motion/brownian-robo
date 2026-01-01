@@ -1,0 +1,61 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+class BrownianRobot:
+    def __init__(self):
+        # boundary (square boundary)
+        self.boundary = 10
+
+        # Robot state
+        self.x = 0.0 # x position
+        self.y = 0.0 # y position
+        self.theta = np.random.uniform(0, 2 * np.pi)  # direction
+        self.speed = 0.1 #robot speed
+
+        # Store path for visualization
+        self.path_x = [] # x path
+        self.path_y = [] # y path
+
+    def move_forward(self):
+        self.x += self.speed * np.cos(self.theta)
+        self.y += self.speed * np.sin(self.theta)
+
+    def check_collision(self):
+        if abs(self.x) >= self.boundary or abs(self.y) >= self.boundary:
+            return True
+        return False
+
+    def random_turn(self):
+        self.theta = np.random.uniform(0, 2 * np.pi)
+
+
+if __name__ == "__main__":
+    robot = BrownianRobot()
+
+    steps = 1000
+
+    for step in range(steps):
+        robot.move_forward()
+
+        if robot.check_collision():
+            robot.random_turn()
+
+        robot.path_x.append(robot.x)
+        robot.path_y.append(robot.y)
+
+    # -------- Visualization --------
+    plt.figure(figsize=(6, 6))
+    plt.plot(robot.path_x, robot.path_y, linewidth=1)
+    plt.scatter(robot.path_x[0], robot.path_y[0], color='green', label='Start')
+    plt.scatter(robot.path_x[-1], robot.path_y[-1], color='yellow', label='End')
+
+    plt.xlim(-robot.boundary, robot.boundary)
+    plt.ylim(-robot.boundary, robot.boundary)
+
+    plt.title("Brownian Motion Robot")
+    plt.xlabel("X Position")
+    plt.ylabel("Y Position")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
