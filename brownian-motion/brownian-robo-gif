@@ -1,0 +1,45 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+# ------------------------
+# Robot Class
+# ------------------------
+class BrownianRobot:
+    def __init__(self):
+        self.x = 5
+        self.y = 5
+        self.theta = np.random.uniform(0, 2*np.pi)
+        self.speed = 0.1
+        self.arena_size = 10
+
+    def move_forward(self):
+        self.x += self.speed * np.cos(self.theta)
+        self.y += self.speed * np.sin(self.theta)
+
+        # Wall collision
+        if self.x <= 0 or self.x >= self.arena_size:
+            self.theta = np.random.uniform(0, 2*np.pi)
+        if self.y <= 0 or self.y >= self.arena_size:
+            self.theta = np.random.uniform(0, 2*np.pi)
+
+# ------------------------
+# Simulation Setup
+# ------------------------
+robot = BrownianRobot()
+
+fig, ax = plt.subplots()
+ax.set_xlim(0, 10)
+ax.set_ylim(0, 10)
+
+point, = ax.plot([], [], 'ro')
+
+def update(frame):
+    robot.move_forward()
+    point.set_data([robot.x], [robot.y])  # ✅ FIX HERE
+    return point,
+
+ani = FuncAnimation(fig, update, frames=300, interval=50)
+
+ani.save("brownian_motion.gif", writer="pillow")
+plt.close()
